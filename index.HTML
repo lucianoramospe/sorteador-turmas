@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sorteador de Turmas Customizado</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sorteador">
+    <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body>
+
+<div id="telaLogin" class="tela-login-overlay">
+    <div class="login-box">
+        <img src="logo.png" alt="Logo do Sorteador" class="logo-login">
+        <h2>🔒 Acesso Restrito</h2>
+        <p>Insira a senha para acessar o sorteador:</p>
+        <input type="password" id="senhaInput" placeholder="Digite a senha..." onkeypress="verificarTeclaLogin(event)">
+        <button class="btn-sortear" onclick="realizarLogin()">Entrar</button>
+        <p id="erroLogin" style="color: #e74c3c; font-weight: bold; margin-top: 10px; display: none;">Senha incorreta!</p>
+    </div>
+</div>
+
+<div class="container" id="conteudoPrincipal" style="display: none;">
+    <img src="logo.png" alt="Logo do Sorteador" class="logo">
+    <h1> Sorteador de Turmas</h1>
+
+    <div class="gerenciamento-turma">
+        <label for="novoNomeTurma">➕ Criar Nova Turma:</label>
+        <input type="text" id="novoNomeTurma" placeholder="Ex: 3º Ano B, Informática...">
+        <button class="btn-criar" onclick="criarTurma()">Criar Turma</button>
+    </div>
+
+    <label>1. Selecione as Turmas para o Sorteio:</label>
+    <div id="listaTurmasCheckboxes" class="lista-turmas-checkboxes"></div>
+
+    <div class="adicionar-aluno-container">
+        <label for="novoAluno">2. Adicionar Aluno na Turma Ativa:</label>
+        <p class="aviso-turma-ativa">Os alunos novos entram na turma que você clicar em cima (fundo destacado).</p>
+        <div class="flex-input-btn">
+            <input type="text" id="novoAluno" placeholder="Nome do aluno..." onkeypress="verificarTeclaAluno(event)">
+            <button class="btn-add-aluno" onclick="adicionarAluno()">Adicionar</button>
+        </div>
+        
+        <div class="importar-csv-container">
+            <label for="inputCSV" class="btn-csv-label">📁 Importar Alunos via CSV</label>
+            <input type="file" id="inputCSV" accept=".csv" onchange="importarCSV(this)" style="display: none;">
+        </div>
+    </div>
+
+    <div class="header-lista">
+        <label>Visualizar / Gerenciar Alunos:</label>
+        <div class="controles-rodada">
+            <span id="contadorRodada" class="contador-rodada">Restam: 0 / 0</span>
+            <button class="btn-reiniciar-rodada" onclick="reiniciarRodada()" title="Zerar rodada das turmas selecionadas">🔄 Reiniciar</button>
+        </div>
+    </div>
+    <ul id="listaAlunosVisual" class="lista-alunos-visual"></ul>
+    
+    <div class="flex-buttons">
+        <button class="btn-limpar" onclick="limparAlunos()">🧹 Limpar Turma Ativa</button>
+        <button class="btn-excluir" onclick="excluirTurma()">🗑️ Excluir Turma Ativa</button>
+    </div>
+
+    <button class="btn-sortear" onclick="sortear()">🎲 Sortear as Turmas Selecionadas!</button>
+
+    <div id="resultadoBox" class="resultado-container">
+        <h2>O sorteado foi:</h2>
+        <p id="nomeSorteado">-</p>
+        <span id="turmaDoSorteado" class="tag-turma-sorteado">Turma</span>
+        <button class="btn-remover-sorteado" onclick="excluirAlunoDefinitivo()">🗑️ Excluir este aluno permanentemente</button>
+    </div>
+    
+    <button onclick="fazerLogoff()" style="background: #95a5a6; color: white; font-size: 12px; padding: 6px 12px; margin-top: 20px; width: auto;">🔒 Sair do App</button>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Web App pronto para uso local!', reg))
+        .catch(err => console.log('Erro ao registrar Web App', err));
+    });
+}
+</script>
+</body>
+</html>
