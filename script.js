@@ -1,7 +1,7 @@
 // CONFIGURAÇÃO DA SENHA DE ACESSO
 const SENHA_CORRETA = "2678";
 
-// Gerenciador de turmas (Carrega IMEDIATAMENTE do localStorage para blindar os dados contra sumiços)
+// Gerenciador de turmas (Carrega IMEDIATAMENTE do localStorage para nunca perder os dados)
 let turmas = {};
 try {
     const dadosSalvos = localStorage.getItem('app_sorteio_turmas');
@@ -13,7 +13,7 @@ try {
     turmas = {};
 }
 
-// Define qual turma começa selecionada de forma segura
+// Define a primeira turma como ativa se houver alguma cadastrada
 let turmaAtivaParaGerenciar = Object.keys(turmas).length > 0 ? Object.keys(turmas)[0] : ""; 
 
 // Função de Login
@@ -22,14 +22,12 @@ function realizarLogin() {
     const erroMsg = document.getElementById('erroLogin');
 
     if (senhaDigitada === SENHA_CORRETA) {
-        // Oculta tela de login e mostra o sorteador
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('conteudoPrincipal').style.display = 'block';
         
-        // Guarda a sessão para não pedir senha a cada F5
         sessionStorage.setItem('app_logado', 'true');
         
-        // Renderiza as turmas que já estão seguras na memória
+        // Renderiza as turmas que já foram carregadas no topo do arquivo
         atualizarInterfaceTurmas();
     } else {
         erroMsg.style.display = 'block';
@@ -47,7 +45,7 @@ function fazerLogoff() {
     window.location.reload();
 }
 
-// Inicializa verificando se o usuário já fez login antes
+// Inicializa verificando a sessão de login
 function inicializar() {
     if (sessionStorage.getItem('app_logado') === 'true') {
         document.getElementById('telaLogin').style.display = 'none';
@@ -60,7 +58,6 @@ function inicializar() {
     }
 }
 
-// Cria os checkboxes das turmas na tela
 function atualizarInterfaceTurmas() {
     const container = document.getElementById('listaTurmasCheckboxes');
     if (!container) return;
@@ -103,7 +100,6 @@ function atualizarInterfaceTurmas() {
     carregarAlunosDaTurmaAtiva();
 }
 
-// Carrega os alunos da turma ativa na lista lateral
 function carregarAlunosDaTurmaAtiva() {
     if (turmaAtivaParaGerenciar && turmas[turmaAtivaParaGerenciar] !== undefined) {
         desenharListaAlunos(turmas[turmaAtivaParaGerenciar]);
@@ -113,11 +109,9 @@ function carregarAlunosDaTurmaAtiva() {
     calcularContadoresRodadaGeral();
 }
 
-// Calcula quantos restam considerando todas as turmas marcadas
 function calcularContadoresRodadaGeral() {
     let total = 0;
     let restantes = 0;
-
     const turmasSelecionadas = obterTurmasMarcadasNosCheckboxes();
     
     turmasSelecionadas.forEach(nomeTurma => {
@@ -133,11 +127,9 @@ function calcularContadoresRodadaGeral() {
     }
 }
 
-// Retorna uma lista com as turmas marcadas com visto
 function obterTurmasMarcadasNosCheckboxes() {
     const nomesDasTurmas = Object.keys(turmas);
     const marcadas = [];
-    
     nomesDasTurmas.forEach(nome => {
         const chk = document.getElementById(`chk-${nome}`);
         if (chk && chk.checked) {
@@ -147,7 +139,6 @@ function obterTurmasMarcadasNosCheckboxes() {
     return marcadas;
 }
 
-// Desenha a lista de alunos da turma ativa
 function desenharListaAlunos(listaAlunos) {
     const ul = document.getElementById('listaAlunosVisual');
     if (!ul) return;
@@ -170,7 +161,6 @@ function desenharListaAlunos(listaAlunos) {
     });
 }
 
-// Cria uma nova turma
 function criarTurma() {
     const inputNome = document.getElementById('novoNomeTurma');
     const nomeTurma = inputNome.value.trim();
@@ -184,11 +174,9 @@ function criarTurma() {
     turmaAtivaParaGerenciar = nomeTurma;
     salvarNoLocalStorage();
     atualizarInterfaceTurmas();
-    
     inputNome.value = "";
 }
 
-// Adiciona aluno na turma ativa
 function adicionarAluno() {
     if (!turmaAtivaParaGerenciar) {
         alert("Crie uma turma antes de adicionar alunos!");
@@ -203,7 +191,6 @@ function adicionarAluno() {
     turmas[turmaAtivaParaGerenciar].push({ nome: nomeAluno, sorteado: false });
     salvarNoLocalStorage();
     carregarAlunosDaTurmaAtiva();
-
     inputAluno.value = "";
     inputAluno.focus();
 }
@@ -212,7 +199,6 @@ function verificarTeclaAluno(event) {
     if (event.key === "Enter") adicionarAluno();
 }
 
-// Exclui aluno da lista lateral
 function excluirAlunoIndividual(index) {
     if (!turmaAtivaParaGerenciar) return;
     turmas[turmaAtivaParaGerenciar].splice(index, 1);
@@ -220,7 +206,6 @@ function excluirAlunoIndividual(index) {
     carregarAlunosDaTurmaAtiva();
 }
 
-// Reinicia a rodada das turmas selecionadas (CORRIGIDO)
 function reiniciarRodada() {
     const turmasMarcadas = obterTurmasMarcadasNosCheckboxes();
 
@@ -241,7 +226,6 @@ function reiniciarRodada() {
     alert("Rodada reiniciada para as turmas marcadas!");
 }
 
-// Limpa todos os alunos da turma ativa
 function limparAlunos() {
     if (!turmaAtivaParaGerenciar || turmas[turmaAtivaParaGerenciar].length === 0) return;
 
@@ -252,7 +236,6 @@ function limparAlunos() {
     }
 }
 
-// Exclui a turma ativa por completo
 function excluirTurma() {
     if (!turmaAtivaParaGerenciar) return;
 
@@ -267,12 +250,11 @@ function excluirTurma() {
 function salvarNoLocalStorage() {
     try {
         localStorage.setItem('app_sorteio_turmas', JSON.stringify(turmas));
-    } catch (e) {
-        console.error("Erro ao salvar dados no localStorage:", e);
+    } catch(e) {
+        console.error("Erro ao salvar no localStorage", e);
     }
 }
 
-// Sorteia misturando as turmas selecionadas
 function sortear() {
     const turmasMarcadas = obterTurmasMarcadasNosCheckboxes();
     let todosDisponiveis = [];
@@ -281,4 +263,110 @@ function sortear() {
         if (turmas[nomeTurma]) {
             turmas[nomeTurma].forEach(aluno => {
                 if (!aluno.sorteado) {
-                    todosDisponiveis.push({ dadosAluno: aluno, daTurma
+                    todosDisponiveis.push({ dadosAluno: aluno, daTurma: nomeTurma });
+                }
+            });
+        }
+    });
+
+    if (turmasMarcadas.length === 0) {
+        alert("Por favor, selecione pelo menos uma turma na caixa de seleção!");
+        return;
+    }
+
+    if (todosDisponiveis.length === 0) {
+        let totalAlunos = 0;
+        turmasMarcadas.forEach(t => totalAlunos += turmas[t].length);
+
+        if (totalAlunos === 0) {
+            alert("As turmas selecionadas não possuem alunos cadastrados!");
+            return;
+        }
+
+        alert("Todos os alunos das turmas selecionadas já foram sorteados! Reiniciando rodada...");
+        turmasMarcadas.forEach(nomeTurma => {
+            turmas[nomeTurma].forEach(aluno => aluno.sorteado = false);
+        });
+        salvarNoLocalStorage();
+        carregarAlunosDaTurmaAtiva();
+        sortear();
+        return;
+    }
+
+    const indiceAleatorio = Math.floor(Math.random() * todosDisponiveis.length);
+    const escolhido = todosDisponiveis[indiceAleatorio];
+
+    escolhido.dadosAluno.sorteado = true;
+    salvarNoLocalStorage();
+
+    document.getElementById('nomeSorteado').innerText = escolhido.dadosAluno.nome;
+    document.getElementById('turmaDoSorteado').innerText = `Turma: ${escolhido.daTurma}`;
+    
+    carregarAlunosDaTurmaAtiva();
+    document.getElementById('resultadoBox').style.display = 'block';
+}
+
+function excluirAlunoDefinitivo() {
+    const nomeSorteado = document.getElementById('nomeSorteado').innerText;
+    if (nomeSorteado === "-") return;
+
+    let deletado = false;
+    Object.keys(turmas).forEach(nomeTurma => {
+        const index = turmas[nomeTurma].findIndex(aluno => aluno.nome === nomeSorteado);
+        if (index > -1) {
+            turmas[nomeTurma].splice(index, 1);
+            deletado = true;
+        }
+    });
+
+    if (deletado) {
+        salvarNoLocalStorage();
+        alert(`O aluno "${nomeSorteado}" foi deletado permanentemente.`);
+    }
+    
+    carregarAlunosDaTurmaAtiva();
+}
+
+function importarCSV(input) {
+    if (!turmaAtivaParaGerenciar) {
+        alert("Por favor, selecione ou crie uma turma ativa antes de importar o arquivo CSV!");
+        input.value = '';
+        return;
+    }
+
+    const arquivo = input.files[0];
+    if (!arquivo) return;
+
+    const leitor = new FileReader();
+    leitor.onload = function(e) {
+        const conteudo = e.target.result;
+        const linhas = conteudo.split(/\r?\n/);
+        let contagemNovosAlunos = 0;
+
+        linhas.forEach(linha => {
+            if (linha.trim() === "") return;
+            const nomes = WebKitCSSMatrix ? linha.split(/[,;]/) : linha.split(/[,;]/);
+
+            nomes.forEach(nome => {
+                const nomeLimpo = nome.trim();
+                if (nomeLimpo !== "" && nomeLimpo.toLowerCase() !== "nome" && nomeLimpo.toLowerCase() !== "nomes" && nomeLimpo.toLowerCase() !== "alunos") {
+                    turmas[turmaAtivaParaGerenciar].push({ nome: nomeLimpo, sorteado: false });
+                    contagemNovosAlunos++;
+                }
+            });
+        });
+
+        if (contagemNovosAlunos > 0) {
+            salvarNoLocalStorage();
+            carregarAlunosDaTurmaAtiva();
+            alert(`Sucesso! ${contagemNovosAlunos} alunos foram importados.`);
+        } else {
+            alert("Nenhum nome válido encontrado no arquivo CSV.");
+        }
+        input.value = '';
+    };
+    leitor.readAsText(arquivo, 'UTF-8');
+}
+
+// Dispara o app após carregar a estrutura HTML
+window.addEventListener('DOMContentLoaded', inicializar);
