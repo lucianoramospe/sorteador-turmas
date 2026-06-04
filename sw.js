@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sorteador-v2'; // <--- MUDAMOS DE v1 PARA v2 AQUI
+const CACHE_NAME = 'sorteador-v3'; // <--- MUDAMOS DE v1 PARA v3 AQUI
 const ASSETS = [
   './index.html',
   './style.css',

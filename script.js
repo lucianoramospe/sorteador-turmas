@@ -1,9 +1,8 @@
-// CONFIGURAÇÃO DA SENHA DE ACESSO (Mude o valor entre aspas para a senha que quiser!)
+// CONFIGURAÇÃO DA SENHA DE ACESSO
 const SENHA_CORRETA = "2678";
 
 // Gerenciador de turmas
 let turmas = {};
-// Guarda qual turma está selecionada na tela para adicionar/remover alunos
 let turmaAtivaParaGerenciar = ""; 
 
 // Função de Login
@@ -12,14 +11,10 @@ function realizarLogin() {
     const erroMsg = document.getElementById('erroLogin');
 
     if (senhaDigitada === SENHA_CORRETA) {
-        // Oculta tela de login e mostra o sorteador
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('conteudoPrincipal').style.display = 'block';
         
-        // Guarda uma sessão temporária para o usuário não ter que digitar a senha toda vez que atualizar a página na mesma hora
         sessionStorage.setItem('app_logado', 'true');
-        
-        // Inicializa os dados do sorteador
         carregarDadosSorteador();
     } else {
         erroMsg.style.display = 'block';
@@ -37,7 +32,7 @@ function fazerLogoff() {
     window.location.reload();
 }
 
-// Inicializa verificando se o usuário já fez login antes
+// Inicializa verificando sessão
 function inicializar() {
     if (sessionStorage.getItem('app_logado') === 'true') {
         document.getElementById('telaLogin').style.display = 'none';
@@ -45,23 +40,22 @@ function inicializar() {
         carregarDadosSorteador();
     } else {
         document.getElementById('telaLogin').style.display = 'flex';
-        document.getElementById('senhaInput').focus();
+        if(document.getElementById('senhaInput')) document.getElementById('senhaInput').focus();
     }
 }
 
-// Carrega as turmas originais após login aceito
+// Carrega as turmas salvando no LocalStorage
 function carregarDadosSorteador() {
     try {
         const dadosSalvos = localStorage.getItem('app_sorteio_turmas');
-        if (dadosSalvos && dadosSalvos !== "{}") {
+        if (dadosSalvos) {
             turmas = JSON.parse(dadosSalvos);
         } else {
             turmas = {};
-            salvarNoLocalStorage();
         }
     } catch (e) {
+        console.error("Erro ao carregar do localStorage", e);
         turmas = {};
-        salvarNoLocalStorage();
     }
     
     const nomesTurmas = Object.keys(turmas);
@@ -74,7 +68,6 @@ function carregarDadosSorteador() {
     atualizarInterfaceTurmas();
 }
 
-// Cria os checkboxes das turmas na tela
 function atualizarInterfaceTurmas() {
     const container = document.getElementById('listaTurmasCheckboxes');
     if (!container) return;
@@ -117,7 +110,6 @@ function atualizarInterfaceTurmas() {
     carregarAlunosDaTurmaAtiva();
 }
 
-// Carrega os alunos da turma ativa na lista lateral
 function carregarAlunosDaTurmaAtiva() {
     if (turmaAtivaParaGerenciar && turmas[turmaAtivaParaGerenciar] !== undefined) {
         desenharListaAlunos(turmas[turmaAtivaParaGerenciar]);
@@ -127,11 +119,9 @@ function carregarAlunosDaTurmaAtiva() {
     calcularContadoresRodadaGeral();
 }
 
-// Calcula quantos restam considerando todas as turmas que estão com o checkbox MARCADO
 function calcularContadoresRodadaGeral() {
     let total = 0;
     let restantes = 0;
-
     const turmasSelecionadas = obterTurmasMarcadasNosCheckboxes();
     
     turmasSelecionadas.forEach(nomeTurma => {
@@ -147,11 +137,9 @@ function calcularContadoresRodadaGeral() {
     }
 }
 
-// Retorna uma lista de strings com os nomes das turmas que estão marcadas com visto
 function obterTurmasMarcadasNosCheckboxes() {
     const nomesDasTurmas = Object.keys(turmas);
     const marcadas = [];
-    
     nomesDasTurmas.forEach(nome => {
         const chk = document.getElementById(`chk-${nome}`);
         if (chk && chk.checked) {
@@ -161,7 +149,6 @@ function obterTurmasMarcadasNosCheckboxes() {
     return marcadas;
 }
 
-// Desenha a lista de alunos da turma que está ativa
 function desenharListaAlunos(listaAlunos) {
     const ul = document.getElementById('listaAlunosVisual');
     if (!ul) return;
@@ -184,7 +171,6 @@ function desenharListaAlunos(listaAlunos) {
     });
 }
 
-// Cria uma nova turma
 function criarTurma() {
     const inputNome = document.getElementById('novoNomeTurma');
     const nomeTurma = inputNome.value.trim();
@@ -198,11 +184,9 @@ function criarTurma() {
     turmaAtivaParaGerenciar = nomeTurma;
     salvarNoLocalStorage();
     atualizarInterfaceTurmas();
-    
     inputNome.value = "";
 }
 
-// Adiciona aluno na turma ativa
 function adicionarAluno() {
     if (!turmaAtivaParaGerenciar) {
         alert("Crie uma turma antes de adicionar alunos!");
@@ -217,7 +201,6 @@ function adicionarAluno() {
     turmas[turmaAtivaParaGerenciar].push({ nome: nomeAluno, sorteado: false });
     salvarNoLocalStorage();
     carregarAlunosDaTurmaAtiva();
-
     inputAluno.value = "";
     inputAluno.focus();
 }
@@ -226,7 +209,6 @@ function verificarTeclaAluno(event) {
     if (event.key === "Enter") adicionarAluno();
 }
 
-// Exclui aluno da lista lateral
 function excluirAlunoIndividual(index) {
     if (!turmaAtivaParaGerenciar) return;
     turmas[turmaAtivaParaGerenciar].splice(index, 1);
@@ -234,16 +216,15 @@ function excluirAlunoIndividual(index) {
     carregarAlunosDaTurmaAtiva();
 }
 
-// Reinicia a rodada de todas as turmas selecionadas nos Checkboxes
 function reiniciarRodada() {
-    constPlatform = obterTurmasMarcadasNosCheckboxes();
+    const turmasMarcadas = obterTurmasMarcadasNosCheckboxes();
 
-    if (platform.length === 0) {
+    if (turmasMarcadas.length === 0) {
         alert("Marque pelo menos uma turma nos checkboxes para reiniciar.");
         return;
     }
 
-    platform.forEach(nomeTurma => {
+    turmasMarcadas.forEach(nomeTurma => {
         if (turmas[nomeTurma]) {
             turmas[nomeTurma].forEach(aluno => aluno.sorteado = false);
         }
@@ -255,7 +236,6 @@ function reiniciarRodada() {
     alert("Rodada reiniciada para as turmas marcadas!");
 }
 
-// Limpa todos os alunos da turma ativa
 function limparAlunos() {
     if (!turmaAtivaParaGerenciar || turmas[turmaAtivaParaGerenciar].length === 0) return;
 
@@ -266,7 +246,6 @@ function limparAlunos() {
     }
 }
 
-// Exclui a turma ativa por completo
 function excluirTurma() {
     if (!turmaAtivaParaGerenciar) return;
 
@@ -279,10 +258,13 @@ function excluirTurma() {
 }
 
 function salvarNoLocalStorage() {
-    localStorage.setItem('app_sorteio_turmas', JSON.stringify(turmas));
+    try {
+        localStorage.setItem('app_sorteio_turmas', JSON.stringify(turmas));
+    } catch(e) {
+        console.error("Erro ao salvar no localStorage", e);
+    }
 }
 
-// SORTEIA MISTURANDO AS TURMAS SELECIONADAS
 function sortear() {
     const turmasMarcadas = obterTurmasMarcadasNosCheckboxes();
     let todosDisponiveis = [];
@@ -311,7 +293,7 @@ function sortear() {
             return;
         }
 
-        alert("Todos os alunos das turmas selecionadas já foram sorteados nesta rodada! Reiniciando elas...");
+        alert("Todos os alunos das turmas selecionadas já foram sorteados! Reiniciando rodada...");
         turmasMarcadas.forEach(nomeTurma => {
             turmas[nomeTurma].forEach(aluno => aluno.sorteado = false);
         });
@@ -334,7 +316,6 @@ function sortear() {
     document.getElementById('resultadoBox').style.display = 'block';
 }
 
-// Exclui permanentemente o aluno que está aparecendo no Box de Vencedor
 function excluirAlunoDefinitivo() {
     const nomeSorteado = document.getElementById('nomeSorteado').innerText;
     if (nomeSorteado === "-") return;
@@ -356,7 +337,6 @@ function excluirAlunoDefinitivo() {
     carregarAlunosDaTurmaAtiva();
 }
 
-// Função para processar o arquivo CSV importado
 function importarCSV(input) {
     if (!turmaAtivaParaGerenciar) {
         alert("Por favor, selecione ou crie uma turma ativa antes de importar o arquivo CSV!");
@@ -368,7 +348,6 @@ function importarCSV(input) {
     if (!arquivo) return;
 
     const leitor = new FileReader();
-    
     leitor.onload = function(e) {
         const conteudo = e.target.result;
         const linhas = conteudo.split(/\r?\n/);
@@ -390,14 +369,14 @@ function importarCSV(input) {
         if (contagemNovosAlunos > 0) {
             salvarNoLocalStorage();
             carregarAlunosDaTurmaAtiva();
-            alert(`Sucesso! ${contagemNovosAlunos} alunos foram importados para a turma "${turmaAtivaParaGerenciar}".`);
+            alert(`Sucesso! ${contagemNovosAlunos} alunos foram importados.`);
         } else {
-            alert("Nenhum nome válido foi encontrado dentro do arquivo CSV.");
+            alert("Nenhum nome válido encontrado no arquivo CSV.");
         }
         input.value = '';
     };
     leitor.readAsText(arquivo, 'UTF-8');
 }
 
-// Dispara a inicialização ao carregar a página
+// Dispara o app
 window.onload = inicializar;
