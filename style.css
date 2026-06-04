@@ -1,0 +1,362 @@
+/* ==========================================
+   ESTILOS GERAIS DA PÁGINA
+   ========================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.logo {
+    width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+h1 {
+    color: #4a90e2;
+    margin-bottom: 25px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.aviso-turma-ativa {
+    font-size: 11px;
+    color: #7f8c8d;
+    text-align: left;
+    margin: -5px 0 10px 0;
+}
+
+.header-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.controles-rodada {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contador-rodada {
+    font-size: 13px;
+    font-weight: bold;
+    color: #7f8c8d;
+    background: #eee;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+/* ==========================================
+   LISTA DE SELEÇÃO DE TURMAS (CHECKBOXES)
+   ========================================== */
+.lista-turmas-checkboxes {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    background: #fff;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.item-turma-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background 0.2s;
+}
+
+.item-turma-checkbox:hover {
+    background: #f0f2f5;
+}
+
+/* Quando clicamos na linha da turma para gerenciar os alunos dela */
+.item-turma-checkbox.ativa {
+    background: #eef5fc;
+    border: 1px solid #4a90e2;
+}
+
+.item-turma-checkbox div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.item-turma-checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.lbl-gerenciar {
+    font-size: 11px;
+    background: #34495e;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* ==========================================
+   CAMPOS DE ENTRADA (INPUTS e CONTAINERS)
+   ========================================== */
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.gerenciamento-turma {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px dashed #ccc;
+}
+
+.flex-input-btn {
+    display: flex;
+    gap: 8px;
+}
+.flex-input-btn input {
+    margin-bottom: 0;
+}
+
+.flex-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+/* ==========================================
+   LISTA VISUAL DE ALUNOS
+   ========================================== */
+.lista-alunos-visual {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fbfbfb;
+    text-align: left;
+}
+
+.lista-alunos-visual li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
+
+.lista-alunos-visual li:last-child {
+    border-bottom: none;
+}
+
+.lista-alunos-visual li.ja-sorteado {
+    background-color: #f2f2f2;
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+.btn-deletar-individual {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 5px;
+    transition: transform 0.1s;
+}
+.btn-deletar-individual:hover { transform: scale(1.2); }
+
+/* ==========================================
+   ESTILOS DOS BOTÕES
+   ========================================== */
+button {
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+button:active { transform: scale(0.98); }
+
+.btn-criar { background-color: #2ecc71; color: white; width: 100%; }
+.btn-criar:hover { background-color: #27ae60; }
+
+.btn-add-aluno { background-color: #34495e; color: white; padding: 0 15px; font-size: 14px;}
+.btn-add-aluno:hover { background-color: #2c3e50; }
+
+.btn-limpar { background-color: #f39c12; color: white; flex: 1; font-size: 14px; }
+.btn-limpar:hover { background-color: #d35400; }
+
+.btn-excluir { background-color: #e74c3c; color: white; flex: 1; font-size: 14px; }
+.btn-excluir:hover { background-color: #c0392b; }
+
+.btn-reiniciar-rodada {
+    background-color: #95a5a6;
+    color: white;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+.btn-reiniciar-rodada:hover { background-color: #7f8c8d; }
+
+.btn-sortear {
+    background-color: #4a90e2;
+    color: white;
+    font-size: 18px;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(74, 144, 226, 0.3);
+}
+.btn-sortear:hover { background-color: #357ae8; }
+
+.btn-remover-sorteado {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 14px;
+    padding: 8px 15px;
+    margin-top: 15px;
+    width: auto;
+    display: inline-block;
+}
+.btn-remover-sorteado:hover { background-color: #c0392b; }
+
+/* ==========================================
+   BOX DE RESULTADO E ANIMAÇÕES
+   ========================================== */
+.resultado-container {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #eef5fc;
+    border-left: 5px solid #4a90e2;
+    border-radius: 4px;
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+#nomeSorteado {
+    font-size: 28px;
+    font-weight: bold;
+    color: #e91e63;
+    margin: 10px 0 5px 0;
+}
+
+.tag-turma-sorteado {
+    display: inline-block;
+    background: #4a90e2;
+    color: white;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================
+   IMPORTADOR DE CSV
+   ========================================== */
+.importar-csv-container {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.btn-csv-label {
+    display: inline-block;
+    background-color: #34495e;
+    color: white;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.btn-csv-label:hover {
+    background-color: #2c3e50;
+}
+
+/* ==========================================
+   TELA DE LOGIN
+   ========================================== */
+.tela-login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-box {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.logo-login {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 15px;
+}
