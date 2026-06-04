@@ -360,3 +360,30 @@ button:active { transform: scale(0.98); }
     height: auto;
     margin-bottom: 15px;
 }
+
+/* ==========================================
+   AJUSTE DE RESPONSIVIDADE DA LOGO
+   ========================================== */
+
+/* Garante que a logo da tela de login não passe do tamanho da caixinha */
+.logo-login {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
+/* Garante que a logo da tela principal se ajuste ao celular */
+.logo {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+/* Se você quiser limitar para a logo não ficar gigante em tablets/computadores */
+@media (min-width: 480px) {
+    .logo, .logo-login {
+        max-width: 200px; /* Altere esse valor para o tamanho máximo que achar bonito no PC */
+    }
+}
